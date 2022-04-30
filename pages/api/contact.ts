@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { MongoClient } from 'mongodb'
 
-const MONGO_URL =
-  'mongodb+srv://madhu:madhu123@cluster0.b1ra7.mongodb.net/next-blog?retryWrites=true&w=majority'
+const MONGO_URL = process.env.MONGO_URL
 
 type Query = {
   email: string
@@ -35,6 +34,10 @@ export default async function handler(
   const { email, name, message } = req.body
   if (!email || !name || !message) {
     return res.status(422).json({ message: 'Please provide all the fields' })
+  }
+
+  if (!MONGO_URL) {
+    return res.status(500).json({ message: 'Unable to connect to database' })
   }
 
   try {
